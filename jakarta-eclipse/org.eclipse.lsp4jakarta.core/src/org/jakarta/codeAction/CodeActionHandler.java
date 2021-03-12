@@ -35,6 +35,7 @@ import org.jakarta.jdt.persistence.PersistenceConstants;
 import org.jakarta.jdt.persistence.PersistenceEntityQuickFix;
 import org.jakarta.jdt.jax_rs.Jax_RSConstants;
 import org.jakarta.jdt.jax_rs.ResourceMethodQuickFix;
+import org.jakarta.jdt.cdi.ConflictInjectObservesObservesAsyncQuickFix;
 import org.jakarta.jdt.cdi.ConflictProducesInjectQuickFix;
 import org.jakarta.jdt.cdi.ManagedBeanConstants;
 import org.jakarta.jdt.cdi.ManagedBeanConstructorQuickFix;
@@ -90,6 +91,7 @@ public class CodeActionHandler {
             PersistenceEntityQuickFix PersistenceEntityQuickFix = new PersistenceEntityQuickFix();
             ConflictProducesInjectQuickFix ConflictProducesInjectQuickFix = new ConflictProducesInjectQuickFix();
             ManagedBeanConstructorQuickFix ManagedBeanConstructorQuickFix = new ManagedBeanConstructorQuickFix();
+            ConflictInjectObservesObservesAsyncQuickFix ConflictInjectObservesObservesAsyncQuickFix = new ConflictInjectObservesObservesAsyncQuickFix();
 
             for (Diagnostic diagnostic : params.getContext().getDiagnostics()) {
                 try {
@@ -138,6 +140,15 @@ public class CodeActionHandler {
                     }
                     if(diagnostic.getCode().getLeft().equals(ManagedBeanConstants.CONSTRUCTOR_DIAGNOSTIC_CODE)) {
                     	codeActions.addAll(ManagedBeanConstructorQuickFix.getCodeActions(context, diagnostic, monitor));
+                    }
+                    if(diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_DISPOSES) 
+                            || diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_OBSERVES)
+                            || diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_OBSERVES_ASYNC)
+                            || diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_DISPOSES_OBSERVES)
+                            || diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_OBSERVES_OBSERVES_ASYNC)
+                            || diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_DISPOSES_OBSERVES_ASYNC)
+                            || diagnostic.getCode().getLeft().equals(ManagedBeanConstants.DIAGNOSTIC_CODE_INJECT_DISPOSES_OBSERVES_OBSERVES_ASYNC)) {
+                        codeActions.addAll(ConflictInjectObservesObservesAsyncQuickFix.getCodeActions(context, diagnostic, monitor));
                     }
                 } catch (CoreException e) {
                     e.printStackTrace();
